@@ -16,7 +16,7 @@ pub unsafe extern fn main() {
 
     for pin in 21..24 {
         bindings::pinMode(pin, bindings::OUTPUT as u8);
-        bindings::digitalWrite(pin, bindings::LOW as u8);
+        bindings::digitalWrite(pin, bindings::HIGH as u8);
     }
 
     for pin in 0..9 {
@@ -24,9 +24,26 @@ pub unsafe extern fn main() {
         bindings::digitalWrite (pin, bindings::HIGH as u8);
     }
 
-  loop {
-      bindings::digitalWrite(0, bindings::digitalRead (18));
-      bindings::delay(10);
+    loop {
+        scan();
+        bindings::delay(1);
+    }
+}
+
+unsafe fn scan(){
+    let output = [
+        [0,1,2],
+        [3,4,5],
+        [6,7,8]
+    ];
+    for (rindex,  row) in (21..24).enumerate() {
+        bindings::digitalWrite(row, bindings::LOW as u8);
+        bindings::delay(1);
+        for (cindex, col) in (18..21).enumerate() {
+            bindings::digitalWrite(output[rindex][cindex], bindings::digitalRead(col));
+        }
+        bindings::delay(1);
+        bindings::digitalWrite(row, bindings::HIGH as u8);
     }
 }
 
