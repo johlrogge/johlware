@@ -5,25 +5,45 @@
 extern crate teensy3;
 
 use teensy3::bindings;
-use teensy3::serial::Serial;
 
 #[no_mangle]
 pub unsafe extern fn main() {
-    // Blink Loop
 
-    bindings::pinMode(13, bindings::OUTPUT as u8);
-    bindings::digitalWrite(13, bindings::LOW as u8);
-    let mut ser = Serial{};
+
+    for pin in 18..21 {
+        bindings::pinMode(pin, bindings::INPUT_PULLUP as u8);
+    }
+
+    for pin in 21..24 {
+        bindings::pinMode(pin, bindings::OUTPUT as u8);
+        bindings::digitalWrite(pin, bindings::HIGH as u8);
+    }
+
+    for pin in 0..9 {
+        bindings::pinMode (pin, bindings::OUTPUT as u8);
+        bindings::digitalWrite (pin, bindings::HIGH as u8);
+    }
 
     loop {
-        // Show we are alive
-        alive();
+        scan();
+        bindings::delay(1);
+    }
+}
 
-        // If the serial write fails, we will halt (no more alive blinks)
-        hello(&ser).unwrap();
-
-        // Don't spam the console
-        bindings::delay(1000);
+unsafe fn scan(){
+    let output = [
+        [0,1,2],
+        [3,4,5],
+        [6,7,8]
+    ];
+    for (rindex,  row) in (21..24).enumerate() {
+        bindings::digitalWrite(row, bindings::LOW as u8);
+        bindings::delay(1);
+        for (cindex, col) in (18..21).enumerate() {
+            bindings::digitalWrite(output[rindex][cindex], bindings::digitalRead(col));
+        }
+        bindings::delay(1);
+        bindings::digitalWrite(row, bindings::HIGH as u8);
     }
 }
 
@@ -37,10 +57,4 @@ pub unsafe fn alive() {
         bindings::digitalWrite(13, bindings::LOW as u8);
         bindings::delay(200);
     }
-}
-
-/// Send a message over the USB Serial port
-pub fn hello(ser: &Serial) -> Result<(),()> {
-    let msg = "Hello Teensy Rusty World!\n\r";
-    ser.write_bytes(msg.as_bytes())
 }
