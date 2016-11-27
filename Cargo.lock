@@ -1,5 +1,5 @@
 [root]
-name = "teensy3-rs-demo"
+name = "johlware"
 version = "0.1.0"
 dependencies = [
  "teensy3 0.1.3 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -1,5 +1,5 @@
 [package]
-name = "teensy3-rs-demo"
+name = "johlware"
 version = "0.1.0"
 authors = ["Joakim Ohlrogge <joakim.ohlrogge@agical.se>"]
 
